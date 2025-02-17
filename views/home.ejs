@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>todo-app</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+  <body>
+    <nav class="bg-white border-gray-200 dark:bg-[#1D2B53]">
+      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+          <img src="images/wish-list_3585145.png" alt="logo-img" class="w-10">
+          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Todolist</span>
+        </a>
+        <div class="hidden w-full md:block md:w-auto">
+          <a href="/logout"><button
+              class="py-2 px-5 bg-white text-[#1D2B53] font-semibold rounded-md shadow-md hover:bg-white-300 focus:outline-none ">
+              logout
+            </button></a>
+        </div>
+      </div>
+    </nav>
+    <h2 class=" text-2xl font-semibold whitespace-nowrap dark:text-black text-center mt-20">Welcome my todolist page <%= email %>
+    </h2>
+    <!--- todo list task --->
+    <div class="max-w-screen-xl mx-auto">
+      <div class="flex gap-4 items-center justify-center mt-12">
+        <h2 class="text-center text-2xl font-semibold  dark:text-[#1D2B53]">My To Do List App</h2>
+        <img src="images/todo-list-svgrepo-com.svg" alt="img" class="w-10">
+      </div>
+    </div>
+    <form method="POST" action="/todos" id="myForm" class=" w-full max-w-prose mx-auto mt-24">
+      <div class="relative">
+        <input type="text" id="task_title" name="task_title" autocomplete="task_title"
+          class="block w-full p-4 ps-5 text-sm  border border-gray-400  rounded-md focus:outline-none   dark:placeholder-gray-800 dark:text-gray"
+          placeholder="Enter Something..." required />
+        <button type="submit"
+          class="text-white absolute end-2.5 bottom-2.5 bg-[#1D2B53] hover:bg-blue-900  focus:outline-none  font-medium rounded-md text-sm px-4 py-2">Add
+          Task
+        </button>
+      </div>
+    </form>
+    <!--- todo list task in display in data  --->
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-screen-xl mx-auto mt-28 mb-28">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-[#F9FAFB] dark:text-black-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              #
+            </th>
+            <th scope="col" class="px-6 py-3">
+              tasks
+            </th>
+            <th scope="col" class="px-6 py-3">
+              status
+            </th>
+            <th scope="col" class="px-6 py-3">
+              action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < task.length ; i++) { %>
+            <tr class="bg-white border-b dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-[#F9FAFB]">
+              <td class="px-6 py-4">
+                <input type='checkbox' class="checked-box" data-task-id="<%= task[i].task_id %>" name='task_checked' <%= task[i].task_checked == 1 ? 'checked' : '' %> />
+              </td>
+              <td class="px-6 py-4 dark:text-black font-medium task-title">
+                <%= task[i].task_title %>
+              </td>
+              <td class="px-6 py-4 dark:text-black font-medium task-status">
+                <%= task[i].task_checked ? "complete" : "pending" %>
+              </td>
+              <td class="px-6 py-4 text-right flex items-center gap-2.5">
+                <a href="/edit/<%= task[i].task_id %>" class="edit-btn" class="edit-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-file-pen-line">
+                    <path d="m18 5-3-3H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2" />
+                    <path d="M8 18h1" />
+                    <path d="M18.4 9.6a2 2 0 1 1 3 3L17 17l-4 1 1-4Z" />
+                  </svg>
+                </a>
+                <a href="/delete/<%=task[i].task_id %>" class="delete-btn" data-task-id="<%= task[i].task_id %>">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-trash-2">
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    <line x1="10" x2="10" y1="11" y2="17" />
+                    <line x1="14" x2="14" y1="11" y2="17" />
+                  </svg>
+                </a>
+              </td>
+            </tr>
+            <% } %>
+        </tbody>
+      </table>
+    </div>
+    <script>
+      // delete btn
+      const btns = document.querySelectorAll('.delete-btn');
+      btns.forEach(btn => {
+        btn.addEventListener('click', function (event) {
+          event.preventDefault();
+          const taskId = this.getAttribute('data-task-id');
+          if (!confirm("Are you sure you want to delete this task?")) {
+            return;
+          }
+          fetch(`/delete/${taskId}`, {
+            method: 'DELETE',
+          }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert(data.message);
+                this.closest('tr').remove();
+              } else {
+                alert("Failed to delete task.");
+              }
+            }).catch(err => console.error('error:', err));
+        })
+      });
+// task complete and pending 
+const checkboxBtns = document.querySelectorAll('input[type="checkbox"]');
+checkboxBtns.forEach(checkboxBtn =>{
+  checkboxBtn.addEventListener('click' ,function(){
+    console.log(checkboxBtn);
+    const taskRow = this.closest('tr');
+    console.log(taskRow);
+    const taskTitle = taskRow.querySelector('.task-title');
+    const taskStatus = taskRow.querySelector('.task-status');
+    const taskId = this.getAttribute('data-task-id'); 
+    if (!taskId) {
+      console.error('Error: Task ID not found');
+      return;
+    }
+    const checked = this.checked ? 1 : 0 ;
+
+    if(checked){
+      taskTitle.style.textDecoration = "line-through";
+      taskStatus.textContent = 'complete';
+      taskStatus.style.color = 'green';
+    }else{
+      taskTitle.style.textDecoration = "none";
+      taskStatus.textContent = 'pending';
+      taskStatus.style.color = 'red';
+    }
+     fetch(`/update-task-status/${taskId}` ,{
+      method : 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task_checked: checked })
+
+    }).then(response=>response.json())
+    .then(data=>{
+      console.log('status:',data);
+    })
+    .catch(err => console.error('Error updating data:', err));
+
+  });
+});
+    </script>
+  </body>
+
+</html>
