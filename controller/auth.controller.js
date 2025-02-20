@@ -60,7 +60,7 @@ async function userLogin(req, res) {
         return res.redirect("/");
     } catch (err) {
         console.error("Error user login data:", err);
-        res.status(500).json({ message: "Error user login data" });
+        res.status(500).json({ message: "Error user login data" + err.message });
     }
 }
 module.exports = {
